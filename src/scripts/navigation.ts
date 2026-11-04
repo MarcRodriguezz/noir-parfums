@@ -103,7 +103,6 @@ function initHeaderBackdrop(): void {
     observer.observe(scene);
   });
   cinema.addEventListener('change', update);
-  update();
 }
 
 export function initNavigation(): void {
