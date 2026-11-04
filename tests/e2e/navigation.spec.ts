@@ -113,6 +113,29 @@ test.describe('links land on the frame that shows the text', () => {
   test.describe('on desktop', () => {
     test.use({ viewport: { width: 1440, height: 900 } });
 
+    test('the jump arrives on the final frame at once, without errors', async ({ page }) => {
+      const errors: string[] = [];
+      page.on('pageerror', (error) => errors.push(error.message));
+      await page.goto('/');
+      await page.waitForTimeout(1500);
+
+      const atClick = await page.evaluate(() => {
+        const link = document.querySelector<HTMLAnchorElement>(
+          '[data-nav-link][href="#revelation"]',
+        );
+        const reverse = document.querySelector<HTMLElement>('[data-layer-reverse]');
+        link?.click();
+        return {
+          wipe: Number(reverse?.dataset['progress']),
+          focused: document.activeElement?.id,
+        };
+      });
+
+      expect(atClick.wipe).toBeGreaterThan(0.99);
+      expect(atClick.focused).toBe('revelation');
+      expect(errors).toEqual([]);
+    });
+
     test('the essence link opens on the first note', async ({ page }) => {
       await page.goto('/');
       await page.waitForTimeout(1500);

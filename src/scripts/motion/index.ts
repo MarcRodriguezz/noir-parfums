@@ -20,7 +20,8 @@ export function startMotion(): () => void {
   setLandingSettle(() => {
     ScrollTrigger.update();
     ScrollTrigger.getAll().forEach((trigger) => {
-      trigger.getTween()?.progress(1);
+      const scrub = trigger.getTween() as gsap.core.Tween | 0 | undefined;
+      if (scrub) scrub.progress(1);
     });
   });
 
