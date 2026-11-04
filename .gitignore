@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.astro/
+
+# Environment and credentials
+.env
+.env.*
+!.env.example
+*.pem
+.dev.vars
+.wrangler/
+.netlify/
+.vercel/
+
+# Test output and temporary captures
+test-results/
+playwright-report/
+blob-report/
+coverage/
+screenshots/
+.lighthouseci/
+*.tmp
+*.log
+
+# Editors and OS
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
