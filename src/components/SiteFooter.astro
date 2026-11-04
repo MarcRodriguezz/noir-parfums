@@ -1,0 +1,31 @@
+---
+import { brand, navigation } from '@/data/product';
+
+interface Props {
+  home?: boolean;
+}
+
+const { home = true } = Astro.props;
+---
+
+<footer class="site-footer">
+  <div class="wrap site-footer__grid">
+    <div>
+      <p class="wordmark text-ivory">{brand.wordmark}</p>
+      <p class="prose-quiet mt-3" data-disclaimer>
+        {brand.disclaimer}
+      </p>
+    </div>
+    <nav aria-label="Footer">
+      <ul class="site-footer__links">
+        {navigation.map((link) => (
+          <li>
+            <a class="link-line" href={home ? link.href : `/${link.href}`}>
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</footer>
