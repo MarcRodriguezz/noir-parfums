@@ -60,6 +60,105 @@ test.describe('desktop navigation', () => {
   });
 });
 
+const readableText = (page: Page, selector: string): Promise<boolean> =>
+  page.evaluate((target) => {
+    const element = document.querySelector(target);
+    if (!element) return false;
+    let opacity = 1;
+    for (let node: Element | null = element; node; node = node.parentElement) {
+      opacity *= Number(getComputedStyle(node).opacity);
+    }
+    const box = element.getBoundingClientRect();
+    const header = document.querySelector('.site-header')?.getBoundingClientRect().bottom ?? 0;
+    return (
+      opacity > 0.9 && box.top >= header - 1 && box.bottom <= window.innerHeight && box.height > 0
+    );
+  }, selector);
+
+test.describe('links land on the frame that shows the text', () => {
+  const SCENES = [
+    { label: 'The Essence', id: 'essence', text: '#essence-title' },
+    { label: 'The Revelation', id: 'revelation', text: '#revelation-title' },
+    { label: 'The Craft', id: 'craft', text: '#craft-title' },
+    { label: 'Reserve', id: 'finale', text: '#finale-title' },
+  ] as const;
+
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 1024, height: 768 },
+    { width: 768, height: 1024 },
+    { width: 390, height: 844 },
+    { width: 844, height: 390 },
+  ]) {
+    test.describe(`at ${viewport.width}x${viewport.height}`, () => {
+      test.use({ viewport });
+
+      for (const scene of SCENES) {
+        test(`${scene.label} shows its text`, async ({ page }) => {
+          await page.goto('/');
+          await page.waitForTimeout(1500);
+          const toggle = page.locator('[data-menu-toggle]');
+          if (await toggle.isVisible()) await toggle.click();
+          await page
+            .getByRole('navigation', { name: 'Main' })
+            .getByRole('link', { name: scene.label })
+            .click();
+          await expect(page).toHaveURL(new RegExp(`#${scene.id}$`));
+          await expect.poll(() => readableText(page, scene.text), { timeout: 5000 }).toBe(true);
+        });
+      }
+    });
+  }
+
+  test.describe('on desktop', () => {
+    test.use({ viewport: { width: 1440, height: 900 } });
+
+    test('the essence link opens on the first note', async ({ page }) => {
+      await page.goto('/');
+      await page.waitForTimeout(1500);
+      await page.getByRole('link', { name: 'The Essence' }).first().click();
+      await expect.poll(() => readableText(page, '[data-note] h3')).toBe(true);
+    });
+
+    test('the revelation link opens with the reverse fully shown', async ({ page }) => {
+      await page.goto('/');
+      await page.waitForTimeout(1500);
+      await page.getByRole('link', { name: 'The Revelation' }).first().click();
+      await expect
+        .poll(() =>
+          page
+            .locator('[data-layer-reverse]')
+            .evaluate((layer) => Number((layer as HTMLElement).dataset['progress'])),
+        )
+        .toBeGreaterThan(0.99);
+    });
+
+    test('a shared link opens on the same frame as a click', async ({ page }) => {
+      await page.goto('/#essence');
+      await expect.poll(() => readableText(page, '[data-note] h3'), { timeout: 8000 }).toBe(true);
+    });
+
+    test('a link jumps back from a later scene', async ({ page }) => {
+      await page.goto('/#finale');
+      await page.waitForTimeout(1500);
+      await page.getByRole('link', { name: 'The Revelation' }).first().click();
+      await expect.poll(() => readableText(page, '#revelation-title')).toBe(true);
+    });
+  });
+
+  test.describe('with reduced motion', () => {
+    test.use({ reducedMotion: 'reduce', viewport: { width: 1440, height: 900 } });
+
+    for (const scene of SCENES) {
+      test(`${scene.label} shows its text`, async ({ page }) => {
+        await page.goto('/');
+        await page.getByRole('link', { name: scene.label }).first().click();
+        await expect.poll(() => readableText(page, scene.text)).toBe(true);
+      });
+    }
+  });
+});
+
 test.describe('reservation call to action', () => {
   test('submits the chosen edition to the confirmation page', async ({ page }) => {
     await page.goto('/#finale');

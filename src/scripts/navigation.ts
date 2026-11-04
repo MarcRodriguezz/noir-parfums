@@ -1,4 +1,5 @@
 import { motionQueries } from '@/lib/motion-profile';
+import { initLandings } from './landing';
 
 const MOBILE_NAV = '(max-width: 47.99rem)';
 
@@ -107,6 +108,7 @@ function initHeaderBackdrop(): void {
 
 export function initNavigation(): void {
   initMenu();
+  initLandings();
   initActiveLink();
   initHeaderBackdrop();
 }

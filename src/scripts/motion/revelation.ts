@@ -1,6 +1,9 @@
 import { gsap } from 'gsap';
 import { revealClipPath, shadowBandPercent } from '@/lib/revelation';
-import { holdUntilArrival } from './shot';
+import { holdUntilArrival, landOnLabel } from './shot';
+
+const WIPE_START = 0.25;
+const WIPE_END = 1.25;
 
 function wipeTimeline(triggerSelector: string, start: string, end: string): gsap.core.Timeline {
   const reverse = document.querySelector<HTMLElement>('[data-layer-reverse]');
@@ -19,9 +22,9 @@ function wipeTimeline(triggerSelector: string, start: string, end: string): gsap
   });
 
   timeline
-    .to(wipe, { progress: 1, duration: 1, ease: 'sine.inOut', onUpdate: apply }, 0.25)
-    .fromTo('[data-camera]', { xPercent: 0 }, { xPercent: -4, duration: 1 }, 0.25)
-    .fromTo('[data-camera-reverse]', { xPercent: 4 }, { xPercent: 0, duration: 1 }, 0.25);
+    .to(wipe, { progress: 1, duration: 1, ease: 'sine.inOut', onUpdate: apply }, WIPE_START)
+    .fromTo('[data-camera]', { xPercent: 0 }, { xPercent: -4, duration: 1 }, WIPE_START)
+    .fromTo('[data-camera-reverse]', { xPercent: 4 }, { xPercent: 0, duration: 1 }, WIPE_START);
 
   return timeline;
 }
@@ -29,11 +32,13 @@ function wipeTimeline(triggerSelector: string, start: string, end: string): gsap
 export function revelationCinema(): void {
   holdUntilArrival('.shot-track--revelation', '[data-revelation-stage]');
   gsap.set('[data-revelation-heading]', { opacity: 0 });
-  wipeTimeline('.shot-track--revelation', 'top top', 'bottom bottom')
+  const timeline = wipeTimeline('.shot-track--revelation', 'top top', 'bottom bottom')
     .to('[data-revelation-heading]', { opacity: 1, duration: 0.4 }, 0.8)
-    .to('[data-camera-reverse]', { scale: 1.06, duration: 0.7 }, 1.25);
+    .to('[data-camera-reverse]', { scale: 1.06, duration: 0.7 }, WIPE_END);
+  landOnLabel('revelation', timeline, WIPE_END);
 }
 
 export function revelationHandheld(): void {
-  wipeTimeline('.shot-track--revelation', 'top top', 'bottom bottom');
+  const timeline = wipeTimeline('.shot-track--revelation', 'top top', 'bottom bottom');
+  landOnLabel('revelation', timeline, WIPE_END);
 }

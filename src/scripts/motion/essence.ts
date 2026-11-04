@@ -1,7 +1,8 @@
 import { gsap } from 'gsap';
-import { holdUntilArrival } from './shot';
+import { holdUntilArrival, landOnLabel } from './shot';
 
 const CAMERA_OPENING = { scale: 1.34, y: '6%' };
+const FIRST_NOTE_FULLY_VISIBLE = 1.65;
 
 export function essenceCinema(): void {
   holdUntilArrival('.shot-track--essence', '.shot-track--essence > .shot-stage');
@@ -54,4 +55,6 @@ export function essenceCinema(): void {
       closing,
     )
     .to({}, { duration: 0.25 });
+
+  landOnLabel('essence', timeline, FIRST_NOTE_FULLY_VISIBLE);
 }

@@ -54,6 +54,10 @@ a {
   border-radius: 1px;
 }
 
+[data-scene]:focus {
+  outline: none;
+}
+
 ::selection {
   background: var(--color-gold);
   color: var(--color-obsidian);

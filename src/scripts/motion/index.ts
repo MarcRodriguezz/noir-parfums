@@ -1,6 +1,7 @@
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { motionQueries } from '@/lib/motion-profile';
+import { clearLandingResolvers, resetLandingSettle, setLandingSettle } from '@/scripts/landing';
 import { craft, finale, revealItems } from './editorial';
 import { essenceCinema } from './essence';
 import { revealCinema, revealHandheld } from './reveal';
@@ -15,6 +16,13 @@ export function startMotion(): () => void {
 
   const root = document.documentElement;
   const media = gsap.matchMedia();
+
+  setLandingSettle(() => {
+    ScrollTrigger.update();
+    ScrollTrigger.getAll().forEach((trigger) => {
+      trigger.getTween()?.progress(1);
+    });
+  });
 
   media.add(motionQueries.cinema, (context) => {
     root.dataset['motion'] = 'cinema';
@@ -38,6 +46,7 @@ export function startMotion(): () => void {
       cancel();
       stopReveal();
       stopParticles();
+      clearLandingResolvers();
       delete root.dataset['motion'];
     };
   });
@@ -65,6 +74,7 @@ export function startMotion(): () => void {
 
   media.add(motionQueries.handheldTall, () => {
     revelationHandheld();
+    return clearLandingResolvers;
   });
 
   if (document.fonts?.status !== 'loaded') {
@@ -74,6 +84,7 @@ export function startMotion(): () => void {
   }
 
   return () => {
+    resetLandingSettle();
     media.revert();
     ScrollTrigger.getAll().forEach((trigger) => {
       trigger.kill();

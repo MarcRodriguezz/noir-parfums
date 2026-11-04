@@ -26,7 +26,7 @@ export function craft(): void {
       scrollTrigger: {
         trigger: '[data-words]',
         start: 'top 82%',
-        end: 'bottom 48%',
+        end: 'bottom 80%',
         scrub: 0.4,
       },
     },
