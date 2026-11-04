@@ -26,10 +26,10 @@ function playIntro(): gsap.core.Timeline {
     .fromTo(
       '[data-sweep]',
       { xPercent: -320, opacity: 0.9 },
-      { xPercent: 150, opacity: 0.9, duration: 2.1, ease: 'sine.inOut' },
+      { xPercent: 150, duration: 2.1, ease: 'sine.inOut' },
       1.1,
     )
-    .set('[data-sweep]', { opacity: 0 });
+    .to('[data-sweep]', { opacity: 0, duration: 0.7, ease: 'power1.in' }, 2.5);
 
   return intro;
 }
