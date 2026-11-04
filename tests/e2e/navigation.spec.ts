@@ -113,27 +113,120 @@ test.describe('links land on the frame that shows the text', () => {
   test.describe('on desktop', () => {
     test.use({ viewport: { width: 1440, height: 900 } });
 
-    test('the jump arrives on the final frame at once, without errors', async ({ page }) => {
+    const followClick = (page: Page, href: string, duration = 1700) =>
+      page.evaluate(
+        ([target, wait]) =>
+          new Promise<{
+            startY: number;
+            samples: { y: number; curtain: number }[];
+            wipe: number;
+            focused: string | undefined;
+          }>((resolve) => {
+            const samples: { y: number; curtain: number }[] = [];
+            const startY = window.scrollY;
+            document.querySelector<HTMLAnchorElement>(`[data-nav-link][href="${target}"]`)?.click();
+            const began = performance.now();
+            const sample = (now: number): void => {
+              const curtain = document.querySelector('[data-scene-curtain]');
+              samples.push({
+                y: window.scrollY,
+                curtain: curtain ? Number(getComputedStyle(curtain).opacity) : 0,
+              });
+              if (now - began < Number(wait)) {
+                requestAnimationFrame(sample);
+                return;
+              }
+              resolve({
+                startY,
+                samples,
+                wipe: Number(
+                  document.querySelector<HTMLElement>('[data-layer-reverse]')?.dataset['progress'],
+                ),
+                focused: document.activeElement?.id,
+              });
+            };
+            requestAnimationFrame(sample);
+          }),
+        [href, duration] as const,
+      );
+
+    test('a long trip changes frame only behind the curtain, without errors', async ({ page }) => {
       const errors: string[] = [];
       page.on('pageerror', (error) => errors.push(error.message));
       await page.goto('/');
       await page.waitForTimeout(1500);
 
-      const atClick = await page.evaluate(() => {
-        const link = document.querySelector<HTMLAnchorElement>(
-          '[data-nav-link][href="#revelation"]',
-        );
-        const reverse = document.querySelector<HTMLElement>('[data-layer-reverse]');
-        link?.click();
-        return {
-          wipe: Number(reverse?.dataset['progress']),
-          focused: document.activeElement?.id,
-        };
+      const trip = await followClick(page, '#revelation');
+      const firstMoved = trip.samples.find((sample) => sample.y !== trip.startY);
+
+      expect(firstMoved?.curtain).toBeGreaterThan(0.95);
+      expect(Math.max(...trip.samples.map((sample) => sample.curtain))).toBeGreaterThan(0.95);
+      await expect
+        .poll(() =>
+          page
+            .locator('[data-scene-curtain]')
+            .evaluate((curtain) => Number(getComputedStyle(curtain).opacity)),
+        )
+        .toBeLessThan(0.02);
+      expect(trip.wipe).toBeGreaterThan(0.99);
+      expect(trip.focused).toBe('revelation');
+      expect(errors).toEqual([]);
+    });
+
+    test('the curtain waits for the images of the destination', async ({ page }) => {
+      await page.goto('/');
+      await page.waitForTimeout(1500);
+      await page.route(/.(avif|webp|jpg)/, async (route) => {
+        await new Promise((resolve) => setTimeout(resolve, 700));
+        await route.continue();
       });
 
-      expect(atClick.wipe).toBeGreaterThan(0.99);
-      expect(atClick.focused).toBe('revelation');
-      expect(errors).toEqual([]);
+      const lifted = await page.evaluate(
+        () =>
+          new Promise<boolean>((resolve) => {
+            document
+              .querySelector<HTMLAnchorElement>('[data-nav-link][href="#revelation"]')
+              ?.click();
+            const start = window.scrollY;
+            const watch = (): void => {
+              if (window.scrollY === start) {
+                requestAnimationFrame(watch);
+                return;
+              }
+              const reverse = document.querySelector<HTMLImageElement>('[data-layer-reverse] img');
+              resolve(Boolean(reverse?.complete && reverse.naturalWidth > 0));
+            };
+            requestAnimationFrame(watch);
+          }),
+      );
+
+      expect(lifted).toBe(true);
+    });
+
+    test('a short trip glides without the curtain', async ({ page }) => {
+      await page.goto('/#craft');
+      await page.waitForTimeout(1500);
+      const landed = await page.evaluate(() => window.scrollY);
+      await page.evaluate((y) => {
+        window.scrollTo({ top: y - 400, behavior: 'instant' });
+      }, landed);
+      await page.waitForTimeout(300);
+
+      const trip = await followClick(page, '#craft', 1100);
+
+      expect(Math.max(...trip.samples.map((sample) => sample.curtain))).toBe(0);
+      expect(Math.abs((trip.samples.at(-1)?.y ?? 0) - landed)).toBeLessThan(2);
+    });
+
+    test('clicking again during the fade ends on the latest choice', async ({ page }) => {
+      await page.goto('/');
+      await page.waitForTimeout(1500);
+      await page.evaluate(() => {
+        document.querySelector<HTMLAnchorElement>('[data-nav-link][href="#finale"]')?.click();
+        document.querySelector<HTMLAnchorElement>('[data-nav-link][href="#craft"]')?.click();
+      });
+      await expect(page).toHaveURL(/#craft$/);
+      await expect.poll(() => readableText(page, '#craft-title')).toBe(true);
     });
 
     test('the essence link opens on the first note', async ({ page }) => {

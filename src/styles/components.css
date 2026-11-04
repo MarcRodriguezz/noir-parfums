@@ -93,6 +93,15 @@
   transform: scaleY(1);
 }
 
+.scene-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: var(--color-obsidian);
+  opacity: 0;
+  pointer-events: none;
+}
+
 .site-header {
   position: fixed;
   inset: 0 0 auto;
