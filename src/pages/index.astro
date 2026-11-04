@@ -1,0 +1,22 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SiteHeader from '@/components/SiteHeader.astro';
+import SiteFooter from '@/components/SiteFooter.astro';
+import Reveal from '@/components/scenes/Reveal.astro';
+import Essence from '@/components/scenes/Essence.astro';
+import Revelation from '@/components/scenes/Revelation.astro';
+import Craft from '@/components/scenes/Craft.astro';
+import Finale from '@/components/scenes/Finale.astro';
+---
+
+<BaseLayout>
+  <SiteHeader />
+  <main id="main" tabindex="-1">
+    <Reveal />
+    <Essence />
+    <Revelation />
+    <Craft />
+    <Finale />
+  </main>
+  <SiteFooter />
+</BaseLayout>

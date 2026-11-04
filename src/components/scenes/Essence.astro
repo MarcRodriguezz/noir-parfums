@@ -1,0 +1,48 @@
+---
+import Photo from '@/components/ui/Photo.astro';
+import { notes } from '@/data/product';
+import front from '@/assets/images/noir-front.jpg';
+---
+
+<section
+  id="essence"
+  class="shot-track shot-track--essence"
+  data-scene="essence"
+  data-clear-header="cinema"
+  aria-labelledby="essence-title"
+>
+  <div class="shot-stage essence" data-stage>
+    <div class="essence-photo" data-essence-photo>
+      <div class="essence-glow" data-essence-glow aria-hidden="true"></div>
+      <div class="frame" data-camera>
+        <Photo src={front} sizes="(min-width: 64rem) 150vh, 200vw" alt="" />
+      </div>
+      <canvas class="essence-particles" data-particles aria-hidden="true"></canvas>
+    </div>
+    <div class="essence-copy wrap">
+      <div class="essence-intro" data-reveal-item>
+        <p class="eyebrow">The Essence</p>
+        <h2 class="essence-title" id="essence-title">
+          It unfolds in three acts.
+        </h2>
+      </div>
+      <ol class="notes">
+        {notes.map((note) => (
+          <li class="note" data-note={note.id} data-reveal-item>
+            <span class="note__numeral" aria-hidden="true" data-note-numeral>
+              {note.numeral}
+            </span>
+            <p class="note__stage">{note.stage}</p>
+            <h3 class="note__moment">{note.moment}</h3>
+            <p class="note__description prose-quiet">{note.description}</p>
+            <ul class="note__ingredients text-gold">
+              {note.ingredients.map((ingredient) => (
+                <li>{ingredient}</li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>

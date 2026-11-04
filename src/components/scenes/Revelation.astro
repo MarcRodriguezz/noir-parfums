@@ -1,0 +1,53 @@
+---
+import Photo from '@/components/ui/Photo.astro';
+import { specifications } from '@/data/product';
+import front from '@/assets/images/noir-front.jpg';
+import reverse from '@/assets/images/noir-reverse.jpg';
+---
+
+<section id="revelation" data-scene="revelation" aria-labelledby="revelation-title">
+  <div class="shot-track shot-track--revelation" data-clear-header="cinema">
+    <div class="revelation-stage" data-revelation-stage>
+      <div class="revelation-frames" data-revelation-frames>
+        <div class="revelation-layer revelation-layer--front" data-layer-front>
+          <div class="frame" data-camera>
+            <Photo src={front} sizes="(min-width: 64rem) 150vh, 200vw" alt="" />
+          </div>
+        </div>
+        <div class="revelation-layer revelation-layer--reverse" data-layer-reverse>
+          <div class="frame" data-camera-reverse>
+            <Photo
+              src={reverse}
+              sizes="(min-width: 64rem) 150vh, 200vw"
+              alt="The same smoked glass bottle seen from its reverse, with a blank matte black label and warm light at the edges of the frame."
+            />
+          </div>
+        </div>
+        <div class="revelation-shadow" data-shadow aria-hidden="true"></div>
+      </div>
+      <div class="revelation-heading wrap" data-revelation-heading>
+        <p class="eyebrow">The Revelation</p>
+        <h2 class="revelation-title" id="revelation-title">
+          <span class="block">Turn it over.</span>
+          <span class="block">It says nothing.</span>
+        </h2>
+      </div>
+    </div>
+  </div>
+  <div class="revelation-details wrap">
+    <div data-reveal-item>
+      <p class="prose-quiet">
+        Most bottles use their reverse to explain themselves. This one keeps a matte black rectangle
+        where the words would go. What Obsidian has to say, it says on your skin.
+      </p>
+    </div>
+    <dl class="spec-list" data-reveal-item>
+      {specifications.map((spec) => (
+        <div class="spec-list__row">
+          <dt class="spec-list__term">{spec.term}</dt>
+          <dd>{spec.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>

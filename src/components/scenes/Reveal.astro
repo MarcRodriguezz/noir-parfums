@@ -1,0 +1,50 @@
+---
+import Photo from '@/components/ui/Photo.astro';
+import { product } from '@/data/product';
+import front from '@/assets/images/noir-front.jpg';
+---
+
+<section
+  id="reveal"
+  class="shot-track shot-track--reveal"
+  data-scene="reveal"
+  data-clear-header="always"
+  aria-label="The Reveal"
+>
+  <div class="shot-stage reveal-stage" data-stage>
+    <div class="reveal-glow reveal-intro-fade" data-reveal-glow aria-hidden="true"></div>
+    <div class="reveal-photo" data-reveal-photo>
+      <div class="frame reveal-intro-fade" data-camera data-intro-photo>
+        <Photo
+          src={front}
+          priority
+          sizes="(min-width: 64rem) 150vh, 200vw"
+          alt="A square bottle of smoked black glass with a brushed champagne cap and a black label reading NOIR, lit from behind with warm amber light."
+        />
+      </div>
+      <div class="reveal-sweep" data-sweep aria-hidden="true"></div>
+    </div>
+    <div class="reveal-copy wrap" data-reveal-copy>
+      <p class="eyebrow reveal-eyebrow reveal-intro-fade" data-intro-fade>
+        {product.fullName}
+      </p>
+      <h1 class="reveal-title">
+        <span class="mask-line" data-intro>
+          <span>Beyond</span>
+        </span>{' '}
+        <span class="reveal-title__rest">
+          <span class="mask-line" data-intro>
+            <span>the</span>
+          </span>{' '}
+          <span class="mask-line" data-intro>
+            <span>Senses</span>
+          </span>
+        </span>
+      </h1>
+      <a class="scroll-cue reveal-intro-fade" href="#essence" data-intro-fade data-scroll-cue>
+        <span>Scroll</span>
+        <span class="scroll-cue__line" aria-hidden="true"></span>
+      </a>
+    </div>
+  </div>
+</section>

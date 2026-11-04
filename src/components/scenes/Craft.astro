@@ -1,0 +1,69 @@
+---
+import { Picture } from 'astro:assets';
+import { materials } from '@/data/product';
+import { splitWords } from '@/lib/format';
+import atmosphere from '@/assets/images/noir-atmosphere.jpg';
+
+const statement =
+  'Obsidian is what happens when lava cools too quickly to crystallise. We wanted a perfume that behaves the same way: dark, glassy, and caught in the moment before it settles.';
+---
+
+<section id="craft" class="craft" data-scene="craft" aria-labelledby="craft-title">
+  <div class="wrap">
+    <p class="eyebrow" data-reveal-item>
+      The Craft
+    </p>
+    <h2 class="craft-statement" id="craft-title" data-words>
+      {splitWords(statement).map((word) => (
+        <span data-word>{word} </span>
+      ))}
+    </h2>
+    <figure class="craft-figure" data-craft-figure>
+      <div class="craft-figure__inner" data-craft-parallax>
+        <Picture
+          src={atmosphere}
+          widths={[640, 960, 1248]}
+          sizes="(min-width: 92rem) 88rem, 92vw"
+          formats={['avif', 'webp']}
+          fallbackFormat="jpg"
+          quality={88}
+          loading="lazy"
+          alt="The bottle standing in a dark chamber between two vertical blades of golden light."
+        />
+      </div>
+    </figure>
+    <div class="craft-layout">
+      <div class="craft-story prose-quiet" data-reveal-item>
+        <p>
+          The house began with a single question and no storefront: how little can a perfume say and
+          still be remembered? Nº 01 took the idea to its limit, with one formula, one bottle and
+          one colour.
+        </p>
+        <p>
+          Everything around the liquid was then taken away until only three materials remained. Open
+          each one to see why it stayed.
+        </p>
+      </div>
+      <div class="materials" data-reveal-item>
+        {materials.map((material) => (
+          <details class="material">
+            <summary>
+              <span>
+                <span class="material__name">{material.name}</span>
+                <span class="material__summary">{material.summary}</span>
+              </span>
+              <span class="material__marker" aria-hidden="true" />
+            </summary>
+            <p class="material__detail">{material.detail}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+    <div class="craft-philosophy" data-reveal-item>
+      <p class="eyebrow">Philosophy</p>
+      <blockquote>
+        Luxury is not the addition of more. It is the courage to leave the label blank.
+      </blockquote>
+    </div>
+  </div>
+</section>

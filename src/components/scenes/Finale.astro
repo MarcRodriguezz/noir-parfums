@@ -1,0 +1,58 @@
+---
+import Photo from '@/components/ui/Photo.astro';
+import { brand, editions, product } from '@/data/product';
+import { formatPrice } from '@/lib/format';
+import front from '@/assets/images/noir-front.jpg';
+
+const [firstEdition, ...restEditions] = editions;
+const defaultSize = restEditions.at(-1)?.sizeMl ?? firstEdition?.sizeMl;
+---
+
+<section id="finale" class="finale" data-scene="finale" aria-labelledby="finale-title">
+  <div class="finale-glow" data-finale-glow aria-hidden="true"></div>
+  <div class="finale-photo" data-finale-photo>
+    <div class="frame">
+      <Photo
+        src={front}
+        sizes="(min-width: 64rem) 70vw, 200vw"
+        alt="NOIR Nº 01, the black glass bottle with its champagne cap, centred in amber light."
+      />
+    </div>
+  </div>
+  <div class="finale-copy wrap">
+    <p class="eyebrow" data-reveal-item>
+      NOIR {product.number}
+    </p>
+    <h2 class="finale-name" id="finale-title" data-finale-name>
+      <span class="mask-line">
+        <span>{product.name}</span>
+      </span>
+    </h2>
+    <p class="finale-claim" data-reveal-item>
+      {brand.claim}
+    </p>
+    <form class="reserve" action="/reserved/" method="get" data-reveal-item>
+      <fieldset class="reserve__options">
+        <legend class="reserve__legend">Choose a flacon</legend>
+        {editions.map((edition) => (
+          <label class="edition">
+            <input
+              type="radio"
+              name="size"
+              value={edition.sizeMl}
+              checked={edition.sizeMl === defaultSize}
+            />
+            <span class="edition__size">{edition.sizeMl} ml</span>
+            <span class="edition__price">{formatPrice(edition.priceEur)}</span>
+          </label>
+        ))}
+      </fieldset>
+      <button class="button" type="submit">
+        Reserve your flacon
+      </button>
+      <p class="reserve__note">
+        Conceptual prices. No payment is taken and no personal data is collected.
+      </p>
+    </form>
+  </div>
+</section>
