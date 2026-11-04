@@ -1,0 +1,12 @@
+@import 'tailwindcss/theme' layer(theme);
+@import 'tailwindcss/preflight' layer(base);
+@import 'tailwindcss/utilities' layer(utilities);
+
+@import '@fontsource-variable/cormorant/wght.css';
+@import '@fontsource-variable/cormorant/wght-italic.css';
+@import '@fontsource-variable/jost/wght.css';
+
+@import './tokens.css';
+@import './base.css';
+@import './components.css';
+@import './scenes.css';

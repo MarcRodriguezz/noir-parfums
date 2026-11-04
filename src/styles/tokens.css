@@ -1,0 +1,34 @@
+@theme {
+  --color-obsidian: #0c0b0a;
+  --color-espresso: #30241e;
+  --color-gold: #c6a675;
+  --color-ivory: #e8ded0;
+  --color-bronze: #79624f;
+  --color-sand: #ad9a85;
+
+  --font-display: 'Cormorant Variable', 'Times New Roman', serif;
+  --font-sans: 'Jost Variable', 'Helvetica Neue', Arial, sans-serif;
+
+  --text-eyebrow: clamp(0.75rem, 0.71rem + 0.18vw, 0.875rem);
+  --text-body: clamp(1.0625rem, 1rem + 0.25vw, 1.25rem);
+  --text-lead: clamp(1.5rem, 1.25rem + 1.1vw, 2.25rem);
+  --text-title: clamp(2.5rem, 1.75rem + 3.6vw, 5.5rem);
+  --text-monument: clamp(2.75rem, 0.4rem + 13.5vw, 15rem);
+
+  --spacing-gutter: clamp(1.25rem, 0.75rem + 2.5vw, 4rem);
+  --spacing-scene: clamp(5rem, 3rem + 9vw, 12rem);
+
+  --breakpoint-tablet: 48rem;
+  --breakpoint-laptop: 64rem;
+  --breakpoint-desktop: 90rem;
+
+  --ease-cinema: cubic-bezier(0.22, 0.8, 0.2, 1);
+  --ease-quiet: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+:root {
+  --header-height: calc(4.5rem + env(safe-area-inset-top, 0px));
+  --duration-micro: 240ms;
+  --duration-gesture: 480ms;
+  --content-width: 92rem;
+}
