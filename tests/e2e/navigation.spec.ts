@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 test.describe('routes', () => {
   test('home exposes the product and one main heading', async ({ page }) => {
@@ -95,15 +95,37 @@ test.describe('craft materials', () => {
 });
 
 test.describe('header backdrop', () => {
-  test.use({ viewport: { width: 1440, height: 900 } });
+  const backdropOpacity = (page: Page): Promise<number> =>
+    page
+      .locator('.site-header')
+      .evaluate((header) => Number(getComputedStyle(header, '::before').opacity));
 
-  test('stays clear over cinematic scenes and turns solid over editorial text', async ({
-    page,
-  }) => {
-    await page.goto('/');
-    const header = page.locator('.site-header');
-    await expect(header).toHaveAttribute('data-solid', 'false');
-    await page.goto('/#craft');
-    await expect(header).toHaveAttribute('data-solid', 'true', { timeout: 10_000 });
+  test.describe('on desktop', () => {
+    test.use({ viewport: { width: 1440, height: 900 } });
+
+    test('stays clear over cinematic scenes and turns solid over editorial text', async ({
+      page,
+    }) => {
+      await page.goto('/');
+      expect(await backdropOpacity(page)).toBe(0);
+
+      await page.goto('/#essence');
+      await page.waitForTimeout(1000);
+      expect(await backdropOpacity(page)).toBe(0);
+
+      await page.goto('/#craft');
+      await expect.poll(() => backdropOpacity(page), { timeout: 10_000 }).toBeGreaterThan(0.9);
+    });
+  });
+
+  test.describe('on mobile', () => {
+    test.use({ viewport: { width: 390, height: 844 } });
+
+    test('turns solid as soon as the text scrolls beneath it', async ({ page }) => {
+      await page.goto('/');
+      expect(await backdropOpacity(page)).toBe(0);
+      await page.goto('/#essence');
+      await expect.poll(() => backdropOpacity(page), { timeout: 10_000 }).toBeGreaterThan(0.9);
+    });
   });
 });

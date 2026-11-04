@@ -96,7 +96,7 @@ function initHeaderBackdrop(): void {
       });
       update();
     },
-    { rootMargin: '0px 0px -100% 0px' },
+    { rootMargin: '-1px 0px -99% 0px' },
   );
 
   clearScenes.forEach((scene) => {
