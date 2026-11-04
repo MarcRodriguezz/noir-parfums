@@ -4,6 +4,16 @@
   "private": true,
   "type": "module",
   "description": "NOIR Nº 01 — OBSIDIAN. Cinematic landing for a fictional perfume house.",
+  "license": "MIT",
+  "author": "Marc Rodriguez",
+  "homepage": "https://noir-parfums.pages.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarcRodriguezz/noir-parfums.git"
+  },
+  "bugs": {
+    "url": "https://github.com/MarcRodriguezz/noir-parfums/issues"
+  },
   "engines": {
     "node": ">=22.23.4"
   },
