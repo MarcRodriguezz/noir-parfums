@@ -1,0 +1,21 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SiteHeader from '@/components/SiteHeader.astro';
+import SiteFooter from '@/components/SiteFooter.astro';
+import { brand } from '@/data/product';
+---
+
+<BaseLayout title={`Page not found | ${brand.name}`} noindex>
+  <SiteHeader home={false} />
+  <main id="main" tabindex="-1" class="wrap plain-page">
+    <p class="eyebrow">Error 404</p>
+    <h1 class="text-[length:var(--text-title)]">This page has evaporated.</h1>
+    <p class="prose-quiet">The address you followed does not lead anywhere in this house.</p>
+    <p>
+      <a class="link-line text-gold" href="/">
+        Return to the house
+      </a>
+    </p>
+  </main>
+  <SiteFooter home={false} />
+</BaseLayout>

@@ -1,0 +1,35 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import SiteHeader from '@/components/SiteHeader.astro';
+import SiteFooter from '@/components/SiteFooter.astro';
+import { brand, product } from '@/data/product';
+---
+
+<BaseLayout title={`Reserved | ${brand.name}`} noindex>
+  <SiteHeader home={false} />
+  <main id="main" tabindex="-1" class="wrap plain-page">
+    <p class="eyebrow">Reservation</p>
+    <h1 class="text-[length:var(--text-title)]">
+      Your flacon is set aside<span data-reserved-size></span>.
+    </h1>
+    <p class="prose-quiet">
+      At least, it would be. {product.fullName} exists only on this site, so nothing has been
+      ordered, charged or stored. Thank you for looking this closely.
+    </p>
+    <p>
+      <a class="link-line text-gold" href="/">
+        Return to the house
+      </a>
+    </p>
+  </main>
+  <SiteFooter home={false} />
+</BaseLayout>
+
+<script>
+  import { editions } from '@/data/product';
+  import { findEdition } from '@/lib/reservation';
+
+  const edition = findEdition(window.location.search, editions);
+  const target = document.querySelector('[data-reserved-size]');
+  if (edition && target) target.textContent = `: ${edition.sizeMl} ml`;
+</script>
